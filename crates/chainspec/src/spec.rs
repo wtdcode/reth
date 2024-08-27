@@ -720,9 +720,12 @@ pub trait ChainSpecProvider: Send + Sync {
 #[cfg(any(test, feature = "test-utils"))]
 #[derive(Debug, Default, Clone)]
 pub struct ChainSpecBuilder {
-    chain: Option<Chain>,
-    genesis: Option<Genesis>,
-    hardforks: ChainHardforks,
+    /// [`Chain`] ID.
+    pub chain: Option<Chain>,
+    /// [`Genesis`].
+    pub genesis: Option<Genesis>,
+    /// [`Hardfork`]s.
+    pub hardforks: ChainHardforks,
 }
 
 #[cfg(any(test, feature = "test-utils"))]
@@ -867,57 +870,6 @@ impl ChainSpecBuilder {
     pub fn prague_activated(mut self) -> Self {
         self = self.cancun_activated();
         self.hardforks.insert(EthereumHardfork::Prague, ForkCondition::Timestamp(0));
-        self
-    }
-
-    /// Enable Bedrock at genesis
-    #[cfg(feature = "optimism")]
-    pub fn bedrock_activated(mut self) -> Self {
-        self = self.paris_activated();
-        self.hardforks.insert(OptimismHardfork::Bedrock, ForkCondition::Block(0));
-        self
-    }
-
-    /// Enable Regolith at genesis
-    #[cfg(feature = "optimism")]
-    pub fn regolith_activated(mut self) -> Self {
-        self = self.bedrock_activated();
-        self.hardforks.insert(OptimismHardfork::Regolith, ForkCondition::Timestamp(0));
-        self
-    }
-
-    /// Enable Canyon at genesis
-    #[cfg(feature = "optimism")]
-    pub fn canyon_activated(mut self) -> Self {
-        self = self.regolith_activated();
-        // Canyon also activates changes from L1's Shanghai hardfork
-        self.hardforks.insert(EthereumHardfork::Shanghai, ForkCondition::Timestamp(0));
-        self.hardforks.insert(OptimismHardfork::Canyon, ForkCondition::Timestamp(0));
-        self
-    }
-
-    /// Enable Ecotone at genesis
-    #[cfg(feature = "optimism")]
-    pub fn ecotone_activated(mut self) -> Self {
-        self = self.canyon_activated();
-        self.hardforks.insert(EthereumHardfork::Cancun, ForkCondition::Timestamp(0));
-        self.hardforks.insert(OptimismHardfork::Ecotone, ForkCondition::Timestamp(0));
-        self
-    }
-
-    /// Enable Fjord at genesis
-    #[cfg(feature = "optimism")]
-    pub fn fjord_activated(mut self) -> Self {
-        self = self.ecotone_activated();
-        self.hardforks.insert(OptimismHardfork::Fjord, ForkCondition::Timestamp(0));
-        self
-    }
-
-    /// Enable Granite at genesis
-    #[cfg(feature = "optimism")]
-    pub fn granite_activated(mut self) -> Self {
-        self = self.fjord_activated();
-        self.hardforks.insert(OptimismHardfork::Granite, ForkCondition::Timestamp(0));
         self
     }
 

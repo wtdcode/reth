@@ -36,3 +36,4 @@ op-alloy-rpc-types.workspace = true
 [features]
 default = ["std"]
 std = []
+test-utils = []

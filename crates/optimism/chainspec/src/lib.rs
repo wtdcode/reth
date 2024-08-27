@@ -14,12 +14,15 @@ pub mod constants;
 
 mod base;
 mod base_sepolia;
+mod builder;
 mod dev;
 mod op;
 mod op_sepolia;
 
 pub use base::BASE_MAINNET;
 pub use base_sepolia::BASE_SEPOLIA;
+#[cfg(feature = "test-utils")]
+pub use builder::OpChainSpecBuilder;
 pub use dev::OP_DEV;
 pub use op::OP_MAINNET;
 pub use op_sepolia::OP_SEPOLIA;
