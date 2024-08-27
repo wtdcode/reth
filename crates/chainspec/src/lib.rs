@@ -27,15 +27,14 @@ pub use reth_ethereum_forks::*;
 
 pub use api::EthChainSpec;
 pub use info::ChainInfo;
+#[cfg(feature = "test-utils")]
+pub use spec::test_fork_ids;
+#[cfg(feature = "test-utils")]
+pub use spec::ChainSpecBuilder;
 pub use spec::{
     BaseFeeParams, BaseFeeParamsKind, ChainSpec, ChainSpecProvider, DepositContract,
     ForkBaseFeeParams, DEV, HOLESKY, MAINNET, SEPOLIA,
 };
-#[cfg(feature = "optimism")]
-pub use spec::{BASE_MAINNET, BASE_SEPOLIA, OP_MAINNET, OP_SEPOLIA};
-
-#[cfg(feature = "test-utils")]
-pub use spec::ChainSpecBuilder;
 
 #[cfg(test)]
 mod tests {
