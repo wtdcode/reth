@@ -30,7 +30,7 @@ mod history;
 pub use history::HistoryWriter;
 
 mod database_provider;
-pub use database_provider::DatabaseProviderFactory;
+pub use database_provider::{DBProviderRO, DatabaseProviderFactory};
 
 mod static_file_provider;
 pub use static_file_provider::StaticFileProviderFactory;

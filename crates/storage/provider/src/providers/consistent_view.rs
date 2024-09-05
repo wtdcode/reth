@@ -1,4 +1,4 @@
-use crate::{BlockNumReader, DatabaseProviderFactory, DatabaseProviderRO, HeaderProvider};
+use crate::{BlockNumReader, DatabaseProviderFactory, HeaderProvider};
 use reth_db_api::database::Database;
 use reth_primitives::{GotExpected, B256};
 use reth_storage_errors::provider::ProviderResult;
@@ -47,7 +47,7 @@ where
     }
 
     /// Creates new read-only provider and performs consistency checks on the current tip.
-    pub fn provider_ro(&self) -> ProviderResult<DatabaseProviderRO<DB>> {
+    pub fn provider_ro(&self) -> ProviderResult<Provider::ProviderRO> {
         // Create a new provider.
         let provider_ro = self.provider.database_provider_ro()?;
 

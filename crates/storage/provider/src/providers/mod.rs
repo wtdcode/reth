@@ -170,6 +170,8 @@ where
 }
 
 impl<N: ProviderNodeTypes> DatabaseProviderFactory<N::DB> for BlockchainProvider<N> {
+    type ProviderRO = DatabaseProviderRO<N::DB>;
+
     fn database_provider_ro(&self) -> ProviderResult<DatabaseProviderRO<N::DB>> {
         self.database.provider()
     }

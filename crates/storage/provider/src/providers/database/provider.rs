@@ -3,7 +3,8 @@ use crate::{
     providers::{database::metrics, static_file::StaticFileWriter, StaticFileProvider},
     to_range,
     traits::{
-        AccountExtReader, BlockSource, ChangeSetReader, ReceiptProvider, StageCheckpointWriter,
+        self, AccountExtReader, BlockSource, ChangeSetReader, ReceiptProvider,
+        StageCheckpointWriter,
     },
     writer::UnifiedStorageWriter,
     AccountReader, BlockExecutionReader, BlockExecutionWriter, BlockHashReader, BlockNumReader,
@@ -3689,6 +3690,12 @@ impl<TX: DbTxMut> FinalizedBlockWriter for DatabaseProvider<TX> {
         Ok(self
             .tx
             .put::<tables::ChainState>(tables::ChainStateKey::LastFinalizedBlock, block_number)?)
+    }
+}
+
+impl<TX: DbTx + 'static> traits::DBProviderRO<TX> for DatabaseProvider<TX> {
+    fn tx_ref(&self) -> &TX {
+        &self.tx
     }
 }
 

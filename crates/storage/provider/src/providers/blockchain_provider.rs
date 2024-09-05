@@ -262,6 +262,8 @@ impl<N: ProviderNodeTypes> BlockchainProvider2<N> {
 }
 
 impl<N: ProviderNodeTypes> DatabaseProviderFactory<N::DB> for BlockchainProvider2<N> {
+    type ProviderRO = DatabaseProviderRO<N::DB>;
+
     fn database_provider_ro(&self) -> ProviderResult<DatabaseProviderRO<N::DB>> {
         self.database.provider()
     }

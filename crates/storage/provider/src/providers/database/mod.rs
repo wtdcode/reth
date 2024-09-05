@@ -183,6 +183,8 @@ impl<N: ProviderNodeTypes> ProviderFactory<N> {
 }
 
 impl<N: ProviderNodeTypes> DatabaseProviderFactory<N::DB> for ProviderFactory<N> {
+    type ProviderRO = DatabaseProviderRO<N::DB>;
+
     fn database_provider_ro(&self) -> ProviderResult<DatabaseProviderRO<N::DB>> {
         self.provider()
     }

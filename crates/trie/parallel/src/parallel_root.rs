@@ -6,7 +6,9 @@ use rayon::prelude::*;
 use reth_db_api::database::Database;
 use reth_execution_errors::StorageRootError;
 use reth_primitives::B256;
-use reth_provider::{providers::ConsistentDbView, DatabaseProviderFactory, ProviderError};
+use reth_provider::{
+    providers::ConsistentDbView, DBProviderRO, DatabaseProviderFactory, ProviderError,
+};
 use reth_trie::{
     hashed_cursor::{HashedCursorFactory, HashedPostStateCursorFactory},
     node_iter::{TrieElement, TrieNodeIter},
