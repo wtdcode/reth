@@ -60,6 +60,10 @@ pub use consistent_view::{ConsistentDbView, ConsistentViewError};
 mod blockchain_provider;
 pub use blockchain_provider::BlockchainProvider2;
 
+pub trait ProviderChainSpec: Send + Sync {}
+
+impl<T> ProviderChainSpec for T where T: Send + Sync {}
+
 /// Helper trait keeping common requirements of providers for [`NodeTypesWithDB`].
 pub trait ProviderNodeTypes: NodeTypesWithDB<ChainSpec = ChainSpec> {}
 

@@ -38,8 +38,8 @@ enum StorageType<C = (), S = ()> {
 /// [`UnifiedStorageWriter`] is responsible for managing the writing to storage with both database
 /// and static file providers.
 #[derive(Debug)]
-pub struct UnifiedStorageWriter<'a, TX, SF> {
-    database: &'a DatabaseProvider<TX>,
+pub struct UnifiedStorageWriter<'a, TX, ChainSpec, SF> {
+    database: &'a DatabaseProvider<TX, ChainSpec>,
     static_file: Option<SF>,
 }
 
@@ -102,7 +102,7 @@ impl<'a, TX, SF> UnifiedStorageWriter<'a, TX, SF> {
     }
 }
 
-impl UnifiedStorageWriter<'_, (), ()> {
+impl UnifiedStorageWriter<'_, (), (), ()> {
     /// Commits both storage types in the right order.
     ///
     /// For non-unwinding operations it makes more sense to commit the static files first, since if
@@ -138,7 +138,7 @@ impl UnifiedStorageWriter<'_, (), ()> {
     }
 }
 
-impl<'a, 'b, TX> UnifiedStorageWriter<'a, TX, &'b StaticFileProvider>
+impl<'a, 'b, TX> UnifiedStorageWriter<'a, TX, ChainSpec, &'b StaticFileProvider>
 where
     TX: DbTxMut + DbTx,
 {
