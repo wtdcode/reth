@@ -4,9 +4,10 @@ use super::{
     BLOCKS_PER_STATIC_FILE,
 };
 use crate::{
-    to_range, BlockHashReader, BlockNumReader, BlockReader, BlockSource, DatabaseProvider,
-    HeaderProvider, ReceiptProvider, RequestsProvider, StageCheckpointReader, StatsReader,
-    TransactionVariant, TransactionsProvider, TransactionsProviderExt, WithdrawalsProvider,
+    providers::ProviderChainSpec, to_range, BlockHashReader, BlockNumReader, BlockReader,
+    BlockSource, DatabaseProvider, HeaderProvider, ReceiptProvider, RequestsProvider,
+    StageCheckpointReader, StatsReader, TransactionVariant, TransactionsProvider,
+    TransactionsProviderExt, WithdrawalsProvider,
 };
 use dashmap::DashMap;
 use notify::{RecommendedWatcher, RecursiveMode, Watcher};
@@ -604,9 +605,9 @@ impl StaticFileProvider {
     /// WARNING: No static file writer should be held before calling this function, otherwise it
     /// will deadlock.
     #[allow(clippy::while_let_loop)]
-    pub fn check_consistency<TX: DbTx>(
+    pub fn check_consistency<TX: DbTx, ChainSpec: ProviderChainSpec>(
         &self,
-        provider: &DatabaseProvider<TX>,
+        provider: &DatabaseProvider<TX, ChainSpec>,
         has_receipt_pruning: bool,
     ) -> ProviderResult<Option<PipelineTarget>> {
         // OVM chain contains duplicate transactions, so is inconsistent by default since reth db
@@ -706,20 +707,20 @@ impl StaticFileProvider {
             }
 
             if let Some(unwind) = match segment {
-                StaticFileSegment::Headers => self.ensure_invariants::<_, tables::Headers>(
+                StaticFileSegment::Headers => self.ensure_invariants::<_, tables::Headers, _>(
                     provider,
                     segment,
                     highest_block,
                     highest_block,
                 )?,
                 StaticFileSegment::Transactions => self
-                    .ensure_invariants::<_, tables::Transactions>(
+                    .ensure_invariants::<_, tables::Transactions, _>(
                         provider,
                         segment,
                         highest_tx,
                         highest_block,
                     )?,
-                StaticFileSegment::Receipts => self.ensure_invariants::<_, tables::Receipts>(
+                StaticFileSegment::Receipts => self.ensure_invariants::<_, tables::Receipts, _>(
                     provider,
                     segment,
                     highest_tx,
@@ -764,9 +765,9 @@ impl StaticFileProvider {
     ///
     /// * If the database tables overlap with static files and have contiguous keys, or the
     ///   checkpoint block matches the highest static files block, then [`None`] will be returned.
-    fn ensure_invariants<TX: DbTx, T: Table<Key = u64>>(
+    fn ensure_invariants<TX: DbTx, T: Table<Key = u64>, ChainSpec: ProviderChainSpec>(
         &self,
-        provider: &DatabaseProvider<TX>,
+        provider: &DatabaseProvider<TX, ChainSpec>,
         segment: StaticFileSegment,
         highest_static_file_entry: Option<u64>,
         highest_static_file_block: Option<BlockNumber>,

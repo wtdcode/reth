@@ -1,5 +1,8 @@
 use crate::{
-    providers::{StaticFileProvider, StaticFileProviderRWRefMut, StaticFileWriter as SfWriter},
+    providers::{
+        ProviderChainSpec, StaticFileProvider, StaticFileProviderRWRefMut,
+        StaticFileWriter as SfWriter,
+    },
     writer::static_file::StaticFileWriter,
     BlockExecutionWriter, BlockWriter, DatabaseProvider, DatabaseProviderRW, HistoryWriter,
     StateChangeWriter, StateWriter, TrieWriter,
@@ -43,24 +46,27 @@ pub struct UnifiedStorageWriter<'a, TX, ChainSpec, SF> {
     static_file: Option<SF>,
 }
 
-impl<'a, TX, SF> UnifiedStorageWriter<'a, TX, SF> {
+impl<'a, TX, ChainSpec, SF> UnifiedStorageWriter<'a, TX, ChainSpec, SF> {
     /// Creates a new instance of [`UnifiedStorageWriter`].
     ///
     /// # Parameters
     /// - `database`: An optional reference to a database provider.
     /// - `static_file`: An optional mutable reference to a static file instance.
-    pub const fn new(database: &'a DatabaseProvider<TX>, static_file: Option<SF>) -> Self {
+    pub const fn new(
+        database: &'a DatabaseProvider<TX, ChainSpec>,
+        static_file: Option<SF>,
+    ) -> Self {
         Self { database, static_file }
     }
 
     /// Creates a new instance of [`UnifiedStorageWriter`] from a database provider and a static
     /// file instance.
-    pub const fn from(database: &'a DatabaseProvider<TX>, static_file: SF) -> Self {
+    pub const fn from(database: &'a DatabaseProvider<TX, ChainSpec>, static_file: SF) -> Self {
         Self::new(database, Some(static_file))
     }
 
     /// Creates a new instance of [`UnifiedStorageWriter`] from a database provider.
-    pub const fn from_database(database: &'a DatabaseProvider<TX>) -> Self {
+    pub const fn from_database(database: &'a DatabaseProvider<TX, ChainSpec>) -> Self {
         Self::new(database, None)
     }
 
@@ -68,7 +74,7 @@ impl<'a, TX, SF> UnifiedStorageWriter<'a, TX, SF> {
     ///
     /// # Panics
     /// If the database provider is not set.
-    const fn database(&self) -> &DatabaseProvider<TX> {
+    const fn database(&self) -> &DatabaseProvider<TX, ChainSpec> {
         self.database
     }
 
@@ -111,8 +117,8 @@ impl UnifiedStorageWriter<'_, (), (), ()> {
     /// start-up.
     ///
     /// NOTE: If unwinding data from storage, use `commit_unwind` instead!
-    pub fn commit<DB: Database>(
-        database: DatabaseProviderRW<DB>,
+    pub fn commit<DB: Database, ChainSpec: ProviderChainSpec>(
+        database: DatabaseProviderRW<DB, ChainSpec>,
         static_file: StaticFileProvider,
     ) -> ProviderResult<()> {
         static_file.commit()?;
@@ -128,8 +134,8 @@ impl UnifiedStorageWriter<'_, (), (), ()> {
     /// checkpoints on the next start-up.
     ///
     /// NOTE: Should only be used after unwinding data from storage!
-    pub fn commit_unwind<DB: Database>(
-        database: DatabaseProviderRW<DB>,
+    pub fn commit_unwind<DB: Database, ChainSpec: ProviderChainSpec>(
+        database: DatabaseProviderRW<DB, ChainSpec>,
         static_file: StaticFileProvider,
     ) -> ProviderResult<()> {
         database.commit()?;
@@ -138,7 +144,8 @@ impl UnifiedStorageWriter<'_, (), (), ()> {
     }
 }
 
-impl<'a, 'b, TX> UnifiedStorageWriter<'a, TX, ChainSpec, &'b StaticFileProvider>
+impl<'a, 'b, TX, ChainSpec: ProviderChainSpec>
+    UnifiedStorageWriter<'a, TX, ChainSpec, &'b StaticFileProvider>
 where
     TX: DbTxMut + DbTx,
 {
@@ -296,7 +303,8 @@ where
     }
 }
 
-impl<'a, 'b, TX> UnifiedStorageWriter<'a, TX, StaticFileProviderRWRefMut<'b>>
+impl<'a, 'b, TX, ChainSpec: ProviderChainSpec>
+    UnifiedStorageWriter<'a, TX, ChainSpec, StaticFileProviderRWRefMut<'b>>
 where
     TX: DbTx,
 {
@@ -407,7 +415,8 @@ where
     }
 }
 
-impl<'a, 'b, TX> UnifiedStorageWriter<'a, TX, StaticFileProviderRWRefMut<'b>>
+impl<'a, 'b, ChainSpec: ProviderChainSpec, TX>
+    UnifiedStorageWriter<'a, TX, ChainSpec, StaticFileProviderRWRefMut<'b>>
 where
     TX: DbTxMut + DbTx,
 {
@@ -488,7 +497,8 @@ where
     }
 }
 
-impl<'a, 'b, TX> StateWriter for UnifiedStorageWriter<'a, TX, StaticFileProviderRWRefMut<'b>>
+impl<'a, 'b, ChainSpec: Send + Sync + 'static, TX> StateWriter
+    for UnifiedStorageWriter<'a, TX, ChainSpec, StaticFileProviderRWRefMut<'b>>
 where
     TX: DbTxMut + DbTx,
 {

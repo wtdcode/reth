@@ -185,7 +185,7 @@ impl<N: ProviderNodeTypes> BlockchainProvider2<N> {
     /// 2. The in-block transaction index.
     fn block_state_by_tx_id(
         &self,
-        provider: &DatabaseProviderRO<N::DB>,
+        provider: &DatabaseProviderRO<N::DB, N::ChainSpec>,
         id: TxNumber,
     ) -> ProviderResult<Option<(Option<Arc<BlockState>>, usize)>> {
         // Get the last block number stored in the database
@@ -262,9 +262,9 @@ impl<N: ProviderNodeTypes> BlockchainProvider2<N> {
 }
 
 impl<N: ProviderNodeTypes> DatabaseProviderFactory<N::DB> for BlockchainProvider2<N> {
-    type ProviderRO = DatabaseProviderRO<N::DB>;
+    type ProviderRO = DatabaseProviderRO<N::DB, N::ChainSpec>;
 
-    fn database_provider_ro(&self) -> ProviderResult<DatabaseProviderRO<N::DB>> {
+    fn database_provider_ro(&self) -> ProviderResult<DatabaseProviderRO<N::DB, N::ChainSpec>> {
         self.database.provider()
     }
 }
