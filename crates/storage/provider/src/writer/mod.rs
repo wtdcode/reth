@@ -497,7 +497,7 @@ where
     }
 }
 
-impl<'a, 'b, ChainSpec: Send + Sync + 'static, TX> StateWriter
+impl<'a, 'b, ChainSpec: ProviderChainSpec, TX> StateWriter
     for UnifiedStorageWriter<'a, TX, ChainSpec, StaticFileProviderRWRefMut<'b>>
 where
     TX: DbTxMut + DbTx,

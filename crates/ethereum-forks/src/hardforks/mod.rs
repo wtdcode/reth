@@ -16,7 +16,8 @@ use std::collections::hash_map::Entry;
 use alloc::{boxed::Box, collections::btree_map::Entry, vec::Vec};
 
 /// Generic trait over a set of ordered hardforks
-pub trait Hardforks: Default + Clone {
+#[auto_impl::auto_impl(&)]
+pub trait Hardforks: Clone {
     /// Retrieves [`ForkCondition`] from `fork`. If `fork` is not present, returns
     /// [`ForkCondition::Never`].
     fn fork<H: Hardfork>(&self, fork: H) -> ForkCondition;
@@ -128,16 +129,6 @@ impl ChainHardforks {
     pub fn remove<H: Hardfork>(&mut self, fork: H) {
         self.forks.retain(|(inner_fork, _)| inner_fork.name() != fork.name());
         self.map.remove(fork.name());
-    }
-}
-
-impl Hardforks for ChainHardforks {
-    fn fork<H: Hardfork>(&self, fork: H) -> ForkCondition {
-        self.fork(fork)
-    }
-
-    fn forks_iter(&self) -> impl Iterator<Item = (&dyn Hardfork, ForkCondition)> {
-        self.forks_iter()
     }
 }
 

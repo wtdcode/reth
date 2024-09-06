@@ -1,5 +1,7 @@
+use alloy_primitives::U256;
+
 use crate::{
-    hardforks::{ChainHardforks, Hardforks},
+    hardforks::{Hardforks},
     EthereumHardfork, ForkCondition,
 };
 
@@ -51,6 +53,10 @@ pub trait EthereumHardforks: Hardforks {
             _ => None,
         }
     }
-}
 
-impl EthereumHardforks for ChainHardforks {}
+    /// Returns the final total difficulty if the given block number is after the Paris hardfork.
+    ///
+    /// Note: technically this would also be valid for the block before the paris upgrade, but this
+    /// edge case is omitted here.
+    fn final_paris_total_difficulty(&self, block_number: u64) -> Option<U256>;
+}

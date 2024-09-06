@@ -387,7 +387,9 @@ impl<TX: DbTx, ChainSpec: Send + Sync + 'static> DatabaseProvider<TX, ChainSpec>
             |_| true,
         )
     }
+}
 
+impl<TX: DbTx, ChainSpec: ProviderChainSpec> DatabaseProvider<TX, ChainSpec> {
     fn block_with_senders<H, HF, B, BF>(
         &self,
         id: BlockHashOrNumber,
@@ -1907,7 +1909,7 @@ impl<TX: DbTx, ChainSpec: ProviderChainSpec> HeaderProvider for DatabaseProvider
     }
 }
 
-impl<TX: DbTx, ChainSpec: ProviderChainSpec> BlockHashReader for DatabaseProvider<TX, ChainSpec> {
+impl<TX: DbTx, ChainSpec: Send + Sync + 'static> BlockHashReader for DatabaseProvider<TX, ChainSpec> {
     fn block_hash(&self, number: u64) -> ProviderResult<Option<B256>> {
         self.static_file_provider.get_with_static_file_or_database(
             StaticFileSegment::Headers,
@@ -2528,7 +2530,7 @@ impl<TX: DbTx, ChainSpec: ProviderChainSpec> EvmEnvProvider for DatabaseProvider
     }
 }
 
-impl<TX: DbTx, ChainSpec: ProviderChainSpec> StageCheckpointReader
+impl<TX: DbTx, ChainSpec: Send + Sync + 'static> StageCheckpointReader
     for DatabaseProvider<TX, ChainSpec>
 {
     fn get_stage_checkpoint(&self, id: StageId) -> ProviderResult<Option<StageCheckpoint>> {

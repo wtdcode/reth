@@ -12,7 +12,7 @@ use crate::{
 use dashmap::DashMap;
 use notify::{RecommendedWatcher, RecursiveMode, Watcher};
 use parking_lot::RwLock;
-use reth_chainspec::ChainInfo;
+use reth_chainspec::{Chain, ChainInfo};
 use reth_db::{
     lockfile::StorageLock,
     static_file::{iter_static_files, HeaderMask, ReceiptMask, StaticFileCursor, TransactionMask},
@@ -613,7 +613,7 @@ impl StaticFileProvider {
         // OVM chain contains duplicate transactions, so is inconsistent by default since reth db
         // not designed for duplicate transactions (see <https://github.com/paradigmxyz/reth/blob/v1.0.3/crates/optimism/primitives/src/bedrock_import.rs>). Undefined behaviour for queries
         // to OVM chain is also in op-erigon.
-        if provider.chain_spec().is_optimism_mainnet() {
+        if provider.chain_spec().chain() == Chain::optimism_mainnet() {
             info!(target: "reth::cli",
                 "Skipping storage verification for OP mainnet, expected inconsistency in OVM chain"
             );
