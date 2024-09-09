@@ -60,6 +60,7 @@ pub use consistent_view::{ConsistentDbView, ConsistentViewError};
 mod blockchain_provider;
 pub use blockchain_provider::BlockchainProvider2;
 
+/// Common bounds for chain specification used by providers.
 pub trait ProviderChainSpec: EthChainSpec + EthereumHardforks + Send + Sync + 'static {}
 
 impl<T> ProviderChainSpec for T where T: EthChainSpec + EthereumHardforks + Send + Sync + 'static {}
