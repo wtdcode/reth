@@ -34,8 +34,7 @@ fn includes_empty_node_preimage() {
 
     let state_root = StateRoot::from_tx(provider.tx_ref()).root().unwrap();
     let multiproof = Proof::from_tx(provider.tx_ref())
-        .with_target((hashed_address, HashSet::from_iter([hashed_slot])))
-        .multiproof()
+        .multiproof(HashMap::from_iter([(hashed_address, HashSet::from_iter([hashed_slot]))]))
         .unwrap();
 
     let witness = TrieWitness::from_tx(provider.tx_ref())
