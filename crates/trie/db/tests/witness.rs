@@ -1,3 +1,5 @@
+#![allow(missing_docs)]
+
 use alloy_primitives::{
     keccak256,
     map::{HashMap, HashSet},
@@ -48,7 +50,7 @@ fn includes_empty_node_preimage() {
         .unwrap();
     assert!(witness.contains_key(&state_root));
     for node in multiproof.account_subtree.values() {
-        assert_eq!(witness.get(&keccak256(&node)), Some(node));
+        assert_eq!(witness.get(&keccak256(node)), Some(node));
     }
     // witness includes empty state trie root node
     assert_eq!(witness.get(&EMPTY_ROOT_HASH), Some(&Bytes::from([EMPTY_STRING_CODE])));
