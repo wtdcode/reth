@@ -26,7 +26,7 @@ fn includes_empty_node_preimage() {
                 storages: HashMap::default(),
             })
             .unwrap(),
-        HashMap::from([(EMPTY_ROOT_HASH, Bytes::from([EMPTY_STRING_CODE]))])
+        HashMap::from_iter([(EMPTY_ROOT_HASH, Bytes::from([EMPTY_STRING_CODE]))])
     );
 
     // Insert account into database
@@ -34,7 +34,7 @@ fn includes_empty_node_preimage() {
 
     let state_root = StateRoot::from_tx(provider.tx_ref()).root().unwrap();
     let multiproof = Proof::from_tx(provider.tx_ref())
-        .with_target((hashed_address, HashSet::from([hashed_slot])))
+        .with_target((hashed_address, HashSet::from_iter([hashed_slot])))
         .multiproof()
         .unwrap();
 
