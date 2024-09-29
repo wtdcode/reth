@@ -139,7 +139,7 @@ where
         DB: Database,
         DB::Error: Into<ProviderError> + Display,
     {
-        let mut system_caller = SystemCaller::new(&self.evm_config, &self.chain_spec);
+        let mut system_caller = SystemCaller::new(&self.evm_config, self.chain_spec.clone());
 
         system_caller.apply_pre_execution_changes(block, &mut evm)?;
 
